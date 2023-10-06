@@ -8,7 +8,6 @@ def install(toolname):
 		This function calls the appropriate installation function (github, download or command line) to install the tool provided (toolname)
 	'''
 
-	repo_canbus_utils = 'https://github.com/digitalbond/canbus-utils.git'
 	repo_kayak = 'https://github.com/dschanoeh/Kayak.git'
 	repo_caringcaribou = 'https://github.com/CaringCaribou/caringcaribou.git' #want to check this to make sure it works, instructions a bit unclear
 	repo_c0f = 'https://github.com/zombieCraig/c0f.git'
@@ -32,6 +31,7 @@ def install(toolname):
 
 
 	if toolname == 'canbus-utils':
+		repo_canbus_utils = 'https://github.com/digitalbond/canbus-utils.git'
 		return tools.github_tools(pack_man, 'canbus-utils', repo_canbus_utils)
 	elif toolname == 'Kayak':
 		return tools.github_tools(pack_man, 'Kayak', repo_kayak)

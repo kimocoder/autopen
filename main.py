@@ -36,11 +36,9 @@ stop = False
 def execute(cmd):
 	global popen
 	popen = subprocess.Popen(cmd, stdout=subprocess.PIPE,shell=True, universal_newlines=True)
-	for stdout_line in iter(popen.stdout.readline, ""):
-		yield stdout_line 
+	yield from iter(popen.stdout.readline, "")
 	popen.stdout.close()
-	return_code = popen.wait()
-	if return_code:
+	if return_code := popen.wait():
 		return
 
 class Application(Frame):
@@ -169,7 +167,7 @@ class Application(Frame):
 		self.ax1 = self.f.add_subplot(111)
 		self.canvas = FigureCanvasTkAgg(self.f, master=root)
 		self.canvas.show()
-		self.canvas.get_tk_widget().grid(row = 0, column = 0, rowspan = 3, columnspan = 1, sticky = W+E+N+S) 
+		self.canvas.get_tk_widget().grid(row = 0, column = 0, rowspan = 3, columnspan = 1, sticky = W+E+N+S)
 		self.ax1.set_xticklabels(ticks)
 
 		for tick in self.ax1.xaxis.get_major_ticks():
@@ -178,10 +176,10 @@ class Application(Frame):
 			#tick.label.set_fontsize('x-small') 
 			tick.label.set_rotation(30)
 
-		if(strlab == "INT"):
-			self.ax1.set_title('Integral Graph: %s' % ID) 
-		if(strlab == "FRQ"):
-			self.ax1.set_title('Frequency Graph: %s' % ID) 
+		if (strlab == "INT"):
+			self.ax1.set_title(f'Integral Graph: {ID}')
+		if (strlab == "FRQ"):
+			self.ax1.set_title(f'Frequency Graph: {ID}') 
 
 		self.ax1.plot(x,y)
 
@@ -200,10 +198,10 @@ class Application(Frame):
 			#tick.label.set_fontsize('x-small') 
 			tick.label.set_rotation(30)
 
-		if(strlab == "INT"):
-			self.ax2.set_title('Integral Graph: %s' % ID) 
-		if(strlab == "FRQ"):
-			self.ax2.set_title('Frequency Graph: %s' % ID) 
+		if (strlab == "INT"):
+			self.ax2.set_title(f'Integral Graph: {ID}')
+		if (strlab == "FRQ"):
+			self.ax2.set_title(f'Frequency Graph: {ID}') 
 
 		self.ax2.plot(x,y)
 
@@ -230,7 +228,7 @@ class Application(Frame):
 			return
 
 		checkCar= False
-		newCar = "%s_%s_%s" % (model, make, trim)
+		newCar = f"{model}_{make}_{trim}"
 
 		db = MySQLdb.connect("localhost","root","toor")
 		cursor = db.cursor()
@@ -249,8 +247,8 @@ class Application(Frame):
 			# Rollback in case there is any error
 			db.rollback()
 
-		if(checkCar == False):
-			sql = "CREATE DATABASE %s;" % (newCar)
+		if (checkCar == False):
+			sql = f"CREATE DATABASE {newCar};"
 			try:
 				# Execute the SQL command
 				cursor.execute(sql)
@@ -259,7 +257,7 @@ class Application(Frame):
 			except:
 				# Rollback in case there is any error
 				db.rollback()
-			
+
 			sql = "SHOW DATABASES;"
 			count = 0
 			try:
@@ -267,7 +265,7 @@ class Application(Frame):
 				cursor.execute(sql)
 				results = cursor.fetchall()
 				for row in results:
-					if(row != "performance_schema" and row!= "information_schema" and row!= "mysql"):
+					if row not in ["performance_schema", "information_schema", "mysql"]:
 						Vtree.insert("",count,values=(row), tags = ('vehicle',))
 						count = count + 1
 
@@ -280,13 +278,13 @@ class Application(Frame):
 			db.close()		
 
 	def regCar(self, DBname):
-		if(DBname == ""):
+		if (DBname == ""):
 			self.TextArea.insert(END, "Please select a vehicle to register.\n")
-			return
 		else:
 			self.VEHICLE_NAME = DBname
 			self.TextArea.insert(END, "%s vehicle selected!.\n" % self.VEHICLE_NAME)
-			return
+
+		return
 
 	# For window managemant
 	def create_window_VehSel(self):
@@ -327,7 +325,7 @@ class Application(Frame):
 		for V in Vtree["columns"]:
 			Vtree.column(V, width=400)
 			Vtree.heading(V, text=V)
-	
+
 		Vtree.tag_configure('vehicle', background='green')
 		Vtree.grid_rowconfigure(0, weight = 1)
 		Vtree.grid_columnconfigure(0, weight = 1)
@@ -343,7 +341,7 @@ class Application(Frame):
 			cursor.execute(sql)
 			results = cursor.fetchall()
 			for row in results:
-				if(row[0] != "performance_schema" and row[0]!= "information_schema" and row[0]!= "mysql"):
+				if row[0] not in ["performance_schema", "information_schema", "mysql"]:
 					Vtree.insert("",count,values=(row), tags = ('vehicle',))
 					count = count + 1
 
@@ -391,15 +389,15 @@ class Application(Frame):
 
 		try:
 			# Drop table if it already exist using execute() method
-			cursor.execute("DROP TABLE IF EXISTS %s" % tablename)
+			cursor.execute(f"DROP TABLE IF EXISTS {tablename}")
 			# Commit your changes in the database
 			db.commit()
 		except:
 			# Rollback in case there is any error
 			db.rollback()
-			
+
 		# Create table
-		sql = "CREATE TABLE %s (TS INT, ARB_ID CHAR(8), DLC CHAR(8), B1 CHAR(8), B2 CHAR(8), B3 CHAR(8), B4 CHAR(8), B5 CHAR(8), B6 CHAR(8), B7 CHAR(8), B8 CHAR(8) )" % tablename
+		sql = f"CREATE TABLE {tablename} (TS INT, ARB_ID CHAR(8), DLC CHAR(8), B1 CHAR(8), B2 CHAR(8), B3 CHAR(8), B4 CHAR(8), B5 CHAR(8), B6 CHAR(8), B7 CHAR(8), B8 CHAR(8) )"
 
 		try:
 			# Execute the SQL command
@@ -416,7 +414,7 @@ class Application(Frame):
 		count = 0
 
 		# Connect to interface:
-		cmd = "exec candump %s -t a" % b.get()
+		cmd = f"exec candump {b.get()} -t a"
 		for line in execute([cmd]):
 			words = line.split()
 
@@ -463,16 +461,15 @@ class Application(Frame):
 			except:
 				# Rollback in case there is any error
 				db.rollback()
-				
+
 			# If the stop button is pressed
 			if stop == True:
 				# Disconnect from server
 				db.close()
 				popen.kill()
 
-			# Stop at desired packet capture count if enabled
-			if numExists == True:
-				if count >= num:
+			if count >= num:
+				if numExists:
 					# Disconnect from server
 					db.close()
 					popen.kill()
@@ -487,8 +484,8 @@ class Application(Frame):
 		db = MySQLdb.connect("localhost","root","toor",self.VEHICLE_NAME )
 		# prepare a cursor object using cursor() method
 		cursor = db.cursor()
-			
-		sql = "SELECT * FROM %s ;" % table
+
+		sql = f"SELECT * FROM {table} ;"
 		count = 0
 
 		try:
@@ -499,8 +496,8 @@ class Application(Frame):
 			results = cursor.fetchall()
 
 			for row in results:
-				cmd = "cansend %s %s#%s.%s%s.%s%s%s%s.%s" % (q.get(), row[1], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10])
-				for line in execute([cmd]):
+				cmd = f"cansend {q.get()} {row[1]}#{row[3]}.{row[4]}{row[5]}.{row[6]}{row[7]}{row[8]}{row[9]}.{row[10]}"
+				for _ in execute([cmd]):
 					count = count + 1
 
 			# Commit your changes in the database
@@ -533,7 +530,7 @@ class Application(Frame):
 		frame = Frame(canvas, background="#ffffff")
 		canvas.pack()
 		canvas.create_window((4,4), window=frame, anchor="w")
-	
+
 
 		# Create column headers at the top and initialize cells
 		Stree = ttk.Treeview(canvas)
@@ -545,7 +542,7 @@ class Application(Frame):
 		for x in Stree["columns"]:
 			Stree.column(x, width=200)
 			Stree.heading(x, text=x)
-	
+
 
 		# Declare labels for FILTERS, NEWEST MESSAGE, BYTE UPDATES
 		Stree.tag_configure('clean', background='yellow')
@@ -573,7 +570,7 @@ class Application(Frame):
 		db = MySQLdb.connect("localhost","root","toor",self.VEHICLE_NAME )
 		# prepare a cursor object using cursor() method
 		cursor = db.cursor()
-			
+
 		sql = "SHOW TABLES ;"
 
 		try:
@@ -585,7 +582,7 @@ class Application(Frame):
 
 			for row in results:
 				name = row[0]
-				sql = "SELECT COUNT(TS) FROM %s;" % row[0]
+				sql = f"SELECT COUNT(TS) FROM {row[0]};"
 				cursor.execute(sql)
 				counts = cursor.fetchall()
 				num = counts[0][0]
@@ -806,10 +803,10 @@ class Application(Frame):
 		thread.start()
 
 	def startInj(self, B1, B2, B3, B4, B5, B6, B7, B8, ARB_INJ_NAME, iname, num):
-		cmd = "cansend %s %s#%s.%s%s.%s%s%s%s.%s" % (iname.get(),ARB_INJ_NAME.get(), B1.get(),B2.get(),B3.get(),B4.get(),B5.get(),B6.get(),B7.get(),B8.get())
+		cmd = f"cansend {iname.get()} {ARB_INJ_NAME.get()}#{B1.get()}.{B2.get()}{B3.get()}.{B4.get()}{B5.get()}{B6.get()}{B7.get()}.{B8.get()}"
 		pcount = int(num.get())
 
-		for i in range(pcount):
+		for _ in range(pcount):
 			for line in execute([cmd]):
 				words = line.split()
 
@@ -826,7 +823,7 @@ class Application(Frame):
 		cursor = db.cursor()
 		try:
 			# Check if the tags database exists
-			cursor.execute("SHOW TABLES LIKE '%s';" % table)
+			cursor.execute(f"SHOW TABLES LIKE '{table}';")
 			results = cursor.fetchall()
 
 			for row in results:
@@ -838,7 +835,7 @@ class Application(Frame):
 		except:
 			# Rollback in case there is any error
 			db.rollback()
-			
+
 		db.close()
 
 		return(found)

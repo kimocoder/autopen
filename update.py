@@ -31,10 +31,7 @@ def update(toolname):
 	curr = os.getcwd()
 	back_index = curr.rfind('/')
 	ap_index = curr.find('autopen')
-	if curr[back_index:] != '/autopen':
-		path = curr[:ap_index+7]
-	else:
-		path = curr
+	path = curr[:ap_index+7] if curr[back_index:] != '/autopen' else curr
 	os.chdir(path)
 
 	github_tools = ['canbus-utils', 'Kayak', 'caringcaribou', 'c0f', 'udsim', 'j1939', 'canbadger-hw', 'canbadger-sw', 'katoolin', 'bluelog', 'bluemaho']
@@ -42,40 +39,40 @@ def update(toolname):
 	commandline_tools = ['bluez', 'btscanner', 'gnuradio', 'aircrack-ng', 'wireshark', 'can-utils', 'tshark', 'gqrx']
 
 
-	try:	
+	try:
 		if toolname in github_tools:
 			if toolname == 'canbus-utils':
-				p = os.getcwd() + '/canbus-utils'
+				p = f'{os.getcwd()}/canbus-utils'
 				os.chdir(p)
 			elif toolname == 'Kayak':
-				p = os.getcwd() + '/Kayak'
+				p = f'{os.getcwd()}/Kayak'
 				os.chdir(p)
 			elif toolname == 'caringcaribou':
-				p = os.getcwd() + '/caringcaribou'
+				p = f'{os.getcwd()}/caringcaribou'
 				os.chdir(p)
 			elif toolname == 'c0f':
-				p = os.getcwd() + '/c0f'
+				p = f'{os.getcwd()}/c0f'
 				os.chdir(p)
 			elif toolname == 'udsim':
-				p = os.getcwd() + '/UDSim'
+				p = f'{os.getcwd()}/UDSim'
 				os.chdir(p)
 			elif toolname == 'j1939':
-				p = os.getcwd() + '/can-utils-j1939'
+				p = f'{os.getcwd()}/can-utils-j1939'
 				os.chdir(p)
 			elif toolname == 'canbadger-hw':
-				p = os.getcwd() + '/CANBadger'
+				p = f'{os.getcwd()}/CANBadger'
 				os.chdir(p)
 			elif toolname == 'canbadger-sw':
-				p = os.getcwd() + '/CANBadger-Server'
+				p = f'{os.getcwd()}/CANBadger-Server'
 				os.chdir(p)
 			elif toolname == 'katoolin':
-				p = os.getcwd() + '/katoolin'
+				p = f'{os.getcwd()}/katoolin'
 				os.chdir(p)
 			elif toolname == 'bluelog':
-				p = os.getcwd() + '/Bluelog'
+				p = f'{os.getcwd()}/Bluelog'
 				os.chdir(p)
 			elif toolname == 'bluemaho':
-				p = os.getcwd() + '/bluemaho'
+				p = f'{os.getcwd()}/bluemaho'
 				os.chdir(p)
 
 			# github tools are updated based on whether local commit is the same version as the master commit	
