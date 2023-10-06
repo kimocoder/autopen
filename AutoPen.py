@@ -765,10 +765,9 @@ installed_tools = []
 
 try:
 	already_installed = open('installed.txt', 'r')
-	for i in already_installed.readlines():
-		installed_tools.append(i.strip('\n'))
+	installed_tools.extend(i.strip('\n') for i in already_installed)
 except FileNotFoundError:
-	
+
 	pass
 
 can = ['o2oo', 'c0f', 'canbadger-hw', 'canbadger-sw', 'canbus-utils', 'can-utils', 'can-utils-j1939', 'can-utils-x', 'caringcaribou', 'pyobd', 'kayak', 'udsim']
@@ -1377,21 +1376,21 @@ class MiscellaneousPage(Screen):
 
 class SeeAllPage(Screen):
 
-	def to_install(widget, name):
-		print (widget.ids[name].state)
+	def to_install(self, name):
+		print(self.ids[name].state)
 
-		if widget.ids[name].state == 'down' and name not in tools_to_install:
-			widget.ids[name].state = 'normal'
-			print (widget.ids[name].state)
+		if self.ids[name].state == 'down' and name not in tools_to_install:
+			self.ids[name].state = 'normal'
+			print(self.ids[name].state)
 			tools_to_install.append(name)
 		else:
-			widget.ids[name].state = 'down'
+			self.ids[name].state = 'down'
 			try:
 				tools_to_install.remove(name)
 			except:
 				pass
 
-	def install_selected(widget):
+	def install_selected(self):
 
 		print (tools_to_install)
 		for i in tools_to_install:
@@ -1402,7 +1401,7 @@ class SeeAllPage(Screen):
 			if rc_i == 0:
 				installed_tools.append(i)
 
-	def install_all(widget):
+	def install_all(self):
 		for i in all_tools:
 			#just for this tool, need to change the name to be consistent with the backend. In the list it is can-utils-j1939 because it is used for the search functionality
 			if i is 'can-utils-j1939':

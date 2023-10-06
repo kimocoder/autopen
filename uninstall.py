@@ -31,11 +31,7 @@ def uninstall(toolname):
 	curr = os.getcwd()
 	back_index = curr.rfind('/')
 	ap_index = curr.find('autopen')
-	if curr[back_index:] != '/autopen':
-		path = curr[:ap_index+7]
-	else:
-		path = curr
-
+	path = curr[:ap_index+7] if curr[back_index:] != '/autopen' else curr
 	os.chdir(path)
 
 	try: 
@@ -102,8 +98,6 @@ def uninstall(toolname):
 	except:
 		print ('Not in correct directory')
 		print ('current directory is: ', os.getcwd())
-		pass
-
 	if rm_rc == 0:
 		#remove the tool from the text file
 		f = open("installed.txt","r+")

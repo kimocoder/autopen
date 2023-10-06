@@ -15,13 +15,13 @@ def check_distribution():
 	distro = ''
 	distribution = (platform.linux_distribution())[0]
 
-	if 'Kali' == distribution or 'kali' == distribution:
+	if distribution in ['Kali', 'kali']:
 		distro = 'kali'
-	elif 'Debian' == distribution or 'debian' == distribution:
+	elif distribution in ['Debian', 'debian']:
 		distro = 'debian'
-	elif 'Ubuntu' == distribution or 'ubuntu' == distribution:
+	elif distribution in ['Ubuntu', 'ubuntu']:
 		distro = 'ubuntu'
-	elif 'Red Hat' == distribution or 'red hat' == distribution:
+	elif distribution in ['Red Hat', 'red hat']:
 		distro = 'red hat'
 
 	return distro
@@ -33,7 +33,7 @@ def package_tool(d):
 
 	pt = ''
 
-	if d == 'kali' or d == 'debian' or d == 'ubuntu':
+	if d in ['kali', 'debian', 'ubuntu']:
 		pt = 'apt-get'
 	elif d == 'red hat':
 		pt = 'yum'

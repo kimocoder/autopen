@@ -34,7 +34,7 @@ def install_pyserial(link):
 		print ('DOWNLOAD SUCCESSFUL: Successfully downloaded pyserial')
 		print ('Building PySerial 2.0 package...')
 		current_dir = os.getcwd()
-		path = current_dir + '/pyserial-2.0'
+		path = f'{current_dir}/pyserial-2.0'
 		os.chdir(path)
 		build_rc = subprocess.run(['python', 'setup.py', 'build']).returncode
 		if build_rc != 0:
@@ -45,11 +45,7 @@ def install_pyserial(link):
 			print ('BUILD SUCCESSFUL: Successfully completed pyserial build')
 			print ('Installing pyserial...')
 			i_rc = subprocess.run(['sudo', 'python', 'setup.py', 'install']).returncode
-			if i_rc != 0:
-				return i_rc
-			else:
-				return 0
-				general_use.move_up_directory()
+			return i_rc if i_rc != 0 else 0
 
 
 def install_NPM(pack_man):
@@ -78,7 +74,7 @@ def check_symlink(source_file, symlink):
 		symlink_rc = subprocess.run(['sudo', 'ln', '-s', source_file, symlink]).returncode #this might not work
 		if symlink_rc != 0:
 			print ('SYMLINK CREATION FAILED: Failed to create a symbolic link between', source_file, 'and', symlink)
-		elif symlink_rc == 0:
+		else:
 			print ('SYMLINK CREATION SUCCESSFUL: Successfully created a symbolic link between', source_file, 'and', symlink)
 		return symlink_rc
 	else:
@@ -123,27 +119,25 @@ def check_NPM(pack_man):
 
 	if i_rc != 0:
 		return i_rc
+	print ('Checking for symbolic link existence between nodejs (/usr/bin/nodejs) and npm (/usr/bin/node)')
+	symlink_rc = check_symlink('/usr/bin/nodejs', '/usr/bin/node')
+	if symlink_rc != 0:
+		return symlink_rc
+	print ('Confirming complete installation of nodejs and npm...') #dk if will keep this yet, we'll see
+	node_check_rc = subprocess.run(['/usr/bin/nodejs', '--version']).returncode
+	npm_check_rc = subprocess.run(['/usr/bin/node', '--version']).returncode
+	if node_check_rc == 0 and npm_check_rc == 0:
+		print ('CONFIRMATION COMPLETE: Successfully confirmed installation of both node.js and npm')
+		return 0
 	else:
-		print ('Checking for symbolic link existence between nodejs (/usr/bin/nodejs) and npm (/usr/bin/node)')
-		symlink_rc = check_symlink('/usr/bin/nodejs', '/usr/bin/node')
-		if symlink_rc != 0:
-			return symlink_rc
+		if node_check_rc != 0:
+			print ('CONFIRMATION FAILED: Could not confirm installation of node.js')
+			print ('ERROR CODE:', node_check_rc)
+			return node_check_rc
 		else:
-			print ('Confirming complete installation of nodejs and npm...') #dk if will keep this yet, we'll see
-			node_check_rc = subprocess.run(['/usr/bin/nodejs', '--version']).returncode
-			npm_check_rc = subprocess.run(['/usr/bin/node', '--version']).returncode
-			if node_check_rc == 0 and npm_check_rc == 0:
-				print ('CONFIRMATION COMPLETE: Successfully confirmed installation of both node.js and npm')
-				return 0
-			else:
-				if node_check_rc != 0:
-					print ('CONFIRMATION FAILED: Could not confirm installation of node.js')
-					print ('ERROR CODE:', node_check_rc)
-					return node_check_rc
-				elif npm_check_rc != 0:
-					print ('CONFIRMATION FAILED: Could not confirm installation of npm')
-					print ('ERROR CODE:', npm_check_rc)
-					return npm_check_rc
+			print ('CONFIRMATION FAILED: Could not confirm installation of npm')
+			print ('ERROR CODE:', npm_check_rc)
+			return npm_check_rc
 
 def install_bluez(pack_man):
 	'''
@@ -161,7 +155,7 @@ def install_bluez(pack_man):
 	else:
 		print ('CLONING SUCCESSFUL: Successfully cloned repository at', repo_bluez)
 		current_dir = os.getcwd()
-		path = current_dir + '/bluez-tools'
+		path = f'{current_dir}/bluez-tools'
 		os.chdir(path)
 		read_rc = commandline_install(pack_man, 'libreadline-dev')
 		if read_rc != 0:
@@ -211,7 +205,6 @@ def install_bluez(pack_man):
 							else:
 								print ('INSTALLATION SUCCESSFUL: Successfully ran make install')
 								return 0
-								general_use.move_up_directory()
 
 def install_lightblue(pack_man):
 	'''
